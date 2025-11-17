@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useRef, useState, } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-//este archivo permite al usuario abrir la camara con la libreria  expo-camera
 
 type Props = {
     onCancel:()=> void;
@@ -11,11 +10,10 @@ type Props = {
 
 
 export function CameraComponent({
-    onCancel, //por si el usuario cancela tomar la foto
-    onPictureTaked, //cuando el usuario tome la foto la manda como uri
-    
+    onCancel,
+    onPictureTaked,
 }: Props) {
-  const [facing, setFacing] = useState<CameraType>('back'); //camara trasera y delantera
+  const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
 
   //referencia al componente de camara
@@ -30,13 +28,13 @@ export function CameraComponent({
     // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>necesito que ole permitas a la app ingresar a tu camara</Text>
+        <Text style={styles.message}>Se neceita acceder a la camara</Text>
         <Button onPress={requestPermission} title="grant permission" />
       </View>
     );
   }
 
-  function toggleCameraFacing() { //para cambiar camara frontal y asi
+  function toggleCameraFacing() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
@@ -52,7 +50,7 @@ export function CameraComponent({
     <View style={styles.container}>
       <CameraView ref={cameraRef} style={styles.camera} facing={facing} />
       <View style={styles.buttons}>
-                {/**botones: cancelar, guardar, tomar foto */}
+                {/*botones: cancelar,tomar foto, camara reversa*/}
                 <TouchableOpacity
                 onPress={onCancel}
                 >
