@@ -4,18 +4,22 @@ import { useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import AccountView from '../auth/AccountView'
 import { GalleryView } from '../gallery/GalleryView'
+import { NotasView } from '../notes/NotasView'
+
 type Props = {
   session: Session
 }
 export default function HomeView({ session }: Props) {
-  const [screen, setScreen] = useState<'home'| 'gallery' | 'profile'>('home')
+  const [screen, setScreen] = useState<'home'| 'gallery' | 'profile' | 'notes'>('home')
 
   const renderContent = () => {
     switch (screen) {
       case 'gallery':
-        return <GalleryView />
+        return <GalleryView/>
       case 'profile':
-        return <AccountView session={session} />
+        return <AccountView session={session}/>
+      case 'notes':
+        return <NotasView/>
       default:
         return (
           <View style={styles.homeButtons}>
@@ -26,6 +30,10 @@ export default function HomeView({ session }: Props) {
 
             <TouchableOpacity style={styles.button} onPress={() => setScreen('profile')}>
               <Text style={styles.buttonText}>Perfil</Text>
+            </TouchableOpacity>
+
+             <TouchableOpacity style={styles.button} onPress={() => setScreen('notes')}>
+              <Text style={styles.buttonText}>Notas</Text>
             </TouchableOpacity>
           </View>
         )
