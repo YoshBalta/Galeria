@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button } from "react-native"
+import { Button, StyleSheet, Text, View } from "react-native";
 import { Note } from "../../domain/note.interface";
 
 type Props = {
@@ -12,6 +12,8 @@ export function NoteItem({ note, onEdit, onDelete }: Props) {
         <View style={styles.card}>
             <Text style={styles.title}>{note.title}</Text>
             <Text style={styles.description}>{note.description}</Text>
+
+            <Text>Hola</Text>
             <Text style={styles.date}>
                 {note.date.toLocaleString()}
             </Text>

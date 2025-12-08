@@ -1,11 +1,11 @@
 // NotasView.tsx
 
-import { FlatList, StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
 import { useEffect, useState } from "react";
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Note } from "../domain/note.interface";
+import { deleteNote, getNotes, saveNote } from "../infraestructure/dataSource";
 import { HisView } from "./components/HisView";
 import { NoteItem } from "./components/NoteItem";
-import { getNotes, saveNote, deleteNote } from "../infraestructure/dataSource";
-import { Note } from "../domain/note.interface";
 
 export function NotasView() {
   const [selected, setSelected] = useState<Note | null>(null);
