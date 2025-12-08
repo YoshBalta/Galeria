@@ -112,6 +112,8 @@ export function NotasView() {
       <TouchableOpacity style={styles.addButton}
         onPress={onNewNote}>
         <Text style={styles.text}>Agregar Nota</Text>
+        <Text>holaa
+        </Text>
       </TouchableOpacity>
 
     </View>
