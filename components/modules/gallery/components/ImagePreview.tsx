@@ -1,91 +1,92 @@
+import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
-import { Image, TouchableOpacity, View,StyleSheet } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-type Props={
-    uri: string,
-    onCancel:() => void;
-    onSave: (uri: string) => void;
+type Props = {
+    uri: string;
+    onCancel: () => void;
     newPhoto: () => void;
-}
+    onSave: (uri: string) => void;
+};
 
-export function ImagePreview(
-    {
-        uri,
-        onCancel,
-        onSave,
-        newPhoto,
-    } : Props
-){
+export function ImagePreview({ uri, onCancel, newPhoto, onSave }: Props) {
 
-    return(
-        <View
-        style={styles.container}
-        >
-            <Image
-            source={{uri}}
-            style={styles.photo}
-            />
+  const uploadImage = async (uri: string) => {
+    try {
+        const fileData = await fetch(uri).then(res => res.arrayBuffer()); 
 
-            
+        // Subir directamente a la raíz del bucket
+        const fileName = `public/photo-${Date.now()}.jpg`;
 
-            <View
-            style={styles.buttons}>
-                {/**botones: cancelar, guardar, tomar foto */}
-                <TouchableOpacity
-                onPress={onCancel}>
+        const { error } = await supabase.storage
+            .from("Image")  
+            .upload(fileName, fileData, {
+                contentType: "image/jpg",
+        
+            });
 
-                    <Ionicons
-                    name="close"
-                    size={32}
-                    color="white"
-                    ></Ionicons>
+        if (error) {
+            console.error("Error al subir:", error.message);
+        } else {
+            console.log("Imagen subida correctamente:", fileName);
+
+            // Obtener URL pública
+            const { data } = supabase.storage
+                .from("Image")  
+                .getPublicUrl(fileName);
+
+            console.log("URL pública obtenida:", data.publicUrl);
+           const { data: insertData, error: dbError } = await supabase
+  .from("Image")
+  .insert([{
+    file_name: fileName,
+    url: data.publicUrl
+  }]);
+
+            // Guardar en el estado local
+            onSave(data.publicUrl); 
+        }
+    } catch (error) {
+        console.error("Error en uploadImage:", error);
+    }
+};
+    return (
+        <View style={styles.container}>
+            <Image style={styles.photo} source={{ uri }} />
+            <View style={styles.buttons}>
+                <TouchableOpacity onPress={onCancel}>
+                    <Ionicons name="close" size={32} color="white" />
                 </TouchableOpacity>
-
-                 <TouchableOpacity>
-                    <Ionicons
-                    name="save-outline"
-                    size={32}
-                    color="white"
-                    ></Ionicons>
+                <TouchableOpacity onPress={() => uploadImage(uri)}>
+                    <Ionicons name="save-outline" size={32} color="white" />
                 </TouchableOpacity>
-
-                 <TouchableOpacity
-                 onPress={()=> onSave (uri)}
-                 >
-                    <Ionicons
-                    name="camera-outline"
-                    size={32}
-                    color="white"
-                    ></Ionicons>
+                <TouchableOpacity onPress={newPhoto}>
+                    <Ionicons name="camera-outline" size={32} color="white" />
                 </TouchableOpacity>
-
             </View>
-
         </View>
     );
 }
-const styles = StyleSheet.create({
 
-    container:{
+const styles = StyleSheet.create({
+    container: {
         flex: 1,
-        justifyContent:'center',
-        backgroundColor: '#000',
+        justifyContent: "center",
+        backgroundColor: "black",
     },
-    photo:{
-        height: '100%',
-        objectFit:'contain'
-        
+    photo: {
+        height: "100%",
+        objectFit: "contain",
     },
-    buttons:{
-        position: 'absolute',
-        bottom: 48,
+    buttons: {
+        display: "flex",
+        flexDirection: "row",
+        position: "absolute",
+        bottom: 30,
         left: 0,
         right: 0,
-        backgroundColor:'transparent',
-        alignItems:'center',
-        justifyContent:'space-around',
-        flexDirection:'row'
+        backgroundColor: "transparent",
+        alignItems: "center",
+        justifyContent: "space-around",
     },
-
-
-})
+});
